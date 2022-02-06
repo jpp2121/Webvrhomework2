@@ -1,0 +1,53 @@
+<html>
+<head>
+    <script src='https://aframe.io/releases/1.2.0/aframe.min.js'></script>
+    <!-- 1. NavMesh -->
+    <script src="https://recast-api.donmccurdy.com/aframe-inspector-plugin-recast.js"></script>
+    <!-- 2. Teleportation Component -->
+    <script src="https://cdn.jsdelivr.net/npm/aframe-blink-controls/dist/aframe-blink-controls.min.js"></script>
+</head>
+
+<body>
+    <!-- 3. Add attribute "inspector-plugin-recast" to the a-scene to enable nav mesh generation engine
+    4. Add cursor
+    -->
+    <a-scene inspector-plugin-recast cursor="rayOrigin: mouse">
+        <!-- 5. Preload 3D Asset. Indicate its location -->
+        <a-assets id="assets">
+            <a-asset-item id="3dEnvironment" src="starwars/scene.gltf"></a-asset-item>
+        </a-assets>
+
+        <!-- Trying to Reference to preloaded asset, changed its positioning -->
+        <a-entity gltf-model="starwars/scene.gltf" rotation="" position="0 1.77952 -3" scale="0.07 0.07 0.07">
+        </a-entity>
+        <!-- We use a plane to create Nav Mesh-->
+        <a-plane scale="1 1 1" color="#333" width="6" height="6" rotation="-90 0 0" color="black" position="0 0.9 -3">
+        </a-plane>
+
+        <!--Hidden NavMesh -->
+        <!-- 1 We indicate src of navMesh - gltf-model="navmesh.gltf" - means that the file is inside of our root folder 
+        2. We include nav-mesh attribute!
+        3. We add visibility attribute
+        -->
+        <a-entity id="nav-mesh" gltf-model="navmesh.gltf" nav-mesh rotation="0 0 0" position="0 0 0" visible="false">
+        </a-entity>
+
+        <!-- Ready to Use controller with navMesh and teleportation -->
+        <a-entity id="player" movement-controls="constrainToNavMesh: true;">
+            <a-entity camera position="0 1.6 0" look-controls="pointerLockEnabled: false" wasd-controls></a-entity>
+            <a-entity id="right-hand" laser-controls="hand: right"
+                blink-controls="cameraRig: #player; teleportOrigin: #camera; collisionEntities: #nav-mesh"></a-entity>
+        </a-entity>
+
+        <!-- Add the code below to <a-scene> to test NavMesh  
+            raycaster="objects: [nav-mesh]" - means check for existence of nav-mesh attribute 
+        -->
+        <!-- testing to see if my area can me moved upon-->
+            <a-entity id="player" movement-controls="constrainToNavMesh: true">
+            <a-entity camera position="0 1.6 0" look-controls>
+                <a-cursor nav-debug-pointer raycaster="objects: [nav-mesh];"></a-cursor>
+            </a-entity>
+        </a-entity>
+    </a-scene>
+</body>
+</html>
